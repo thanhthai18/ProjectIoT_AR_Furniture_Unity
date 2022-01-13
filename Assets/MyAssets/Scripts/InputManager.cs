@@ -9,13 +9,35 @@ public class InputManager : MonoBehaviour
     [SerializeField] private Camera arCam;
     [SerializeField] private ARRaycastManager _raycastManager;
     [SerializeField] private GameObject crosshair;
-    private RaycastHit hit;
-    private Pose pose;
 
     private List<ARRaycastHit> _hits = new List<ARRaycastHit>();
-    private Touch touch;
 
-    public bool IsPointerOverUI(Touch touch)
+    private Touch touch;
+    private Pose pose;
+
+
+
+
+    void Update()
+    {
+        CrosshairCalculation();
+
+        //touch = Input.GetTouch(0);
+        //if (Input.touchCount <= 0 || touch.phase != TouchPhase.Began)
+        //    return;
+
+
+
+        if (IsPointerOverUI(touch)) return;
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            Instantiate(DataHandler.Instance.GetFurniture(), pose.position, pose.rotation);
+        }
+
+    }
+
+    bool IsPointerOverUI(Touch touch)
     {
         PointerEventData eventData = new PointerEventData(EventSystem.current);
         eventData.position = new Vector2(touch.position.x, touch.position.y);
@@ -24,6 +46,7 @@ public class InputManager : MonoBehaviour
         return results.Count > 0;
     }
 
+    private RaycastHit hit;
     void CrosshairCalculation()
     {
         Vector3 origin = arCam.ViewportToScreenPoint(new Vector3(0.5f, 0.5f, 0));
@@ -42,23 +65,4 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        CrosshairCalculation();
-
-        touch = Input.GetTouch(0);
-
-        if (Input.touchCount < 0 || touch.phase != TouchPhase.Began)
-            return;
-        if (IsPointerOverUI(touch)) return;
-
-
-        Ray ray = arCam.ScreenPointToRay(touch.position);
-        if (_raycastManager.Raycast(ray, _hits))
-        {
-            Pose pose = _hits[0].pose;
-            Instantiate(DataHandler.Instance.furniture, pose.position, pose.rotation);
-        }
-
-    }
 }
