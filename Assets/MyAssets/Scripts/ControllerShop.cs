@@ -10,7 +10,7 @@ public class ControllerShop : MonoBehaviour
 
     public Button btnCloseShop, btnBack;
 
-    public GameObject screenShop, screenDetail;
+    public GameObject screenShop, screenDetail, screenGioHang, screenDatHang;
 
     private void Awake()
     {
@@ -22,6 +22,10 @@ public class ControllerShop : MonoBehaviour
 
     private void Start()
     {
+        screenShop.SetActive(true);
+        screenDetail.SetActive(false);
+        screenGioHang.SetActive(false);
+
         btnCloseShop.onClick.AddListener(CloseScreenShop);
         btnBack.onClick.AddListener(BackToScreenShop);
     }
@@ -29,6 +33,7 @@ public class ControllerShop : MonoBehaviour
     void CloseScreenShop()
     {
         screenShop.SetActive(false);
+        screenGioHang.SetActive(true);
     }
 
     void BackToScreenShop()

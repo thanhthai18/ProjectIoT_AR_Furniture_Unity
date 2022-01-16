@@ -6,12 +6,14 @@ using TMPro;
 
 public class Shop : MonoBehaviour
 {
+    public static Shop instance;
+
     [System.Serializable]
     public class ShopItem
     {
         public Sprite image;
         public string name;
-        public int price;
+        public float price;
     }
 
     [Header("General")]
@@ -27,17 +29,26 @@ public class Shop : MonoBehaviour
     public Image imageDetail;
     public TextMeshProUGUI txtPriceDetail;
     public TextMeshProUGUI txtMoTa;
+    public float currentItemPrice;
     public Image colorImg;
     public TextMeshProUGUI txtKichThuoc;
 
     [Header("Button")]
     public Button btnShowDetail;
+    public Button btnThemVaoGioHang;
 
-
+    private void Awake()
+    {
+        if(instance == null)
+        {
+            instance = this;
+        }
+    }
 
     private void Start()
     {
-
+        //btnThemVaoGioHang.AddEventListener(txtNameDetail.text, imageDetail.sprite, currentItemPrice, ButtonThemGioHang);
+        btnThemVaoGioHang.onClick.AddListener(delegate { ButtonThemGioHang(txtNameDetail.text, imageDetail.sprite, currentItemPrice); });
         itemTemplate = shopScrollViewContent.GetChild(0).gameObject;
 
         int len = listShopItem.Count;
@@ -65,15 +76,24 @@ public class Shop : MonoBehaviour
         ControllerShop.instance.screenShop.SetActive(false);
         txtNameDetail.text = listShopItem[itemIndex].name;
         imageDetail.sprite = listShopItem[itemIndex].image;
+        currentItemPrice = listShopItem[itemIndex].price;
         txtPriceDetail.text = "Giá: " + listShopItem[itemIndex].price.ToString().Insert((listShopItem[itemIndex].price.ToString().Length) - 3, ".") + " VNĐ";
         txtMoTa.text = data.listMoTa[itemIndex];
         colorImg.color = data.listColor[itemIndex];
         txtKichThuoc.text = "Kich thuoc: " + data.listKichThuoc[itemIndex];
 
+        //btnThemVaoGioHang.onClick.AddListener(delegate { ButtonThemGioHang(txtNameDetail.text, imageDetail.sprite, listShopItem[itemIndex].price); });
+
+        //btnThemVaoGioHang = ControllerShop.instance.screenDetail.transform.GetChild(2).GetComponent<Button>();
+        
+
+    }
+
+    
+    void ButtonThemGioHang(string name, Sprite img, float price)
+    {
+        GioHang.instance.AddItem(name, img, price);
     }
 
 
 }
-
-
-
