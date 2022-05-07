@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 
 public class Shop : MonoBehaviour
 {
@@ -21,6 +22,8 @@ public class Shop : MonoBehaviour
     public GameObject item;
     public Transform shopScrollViewContent;
     public List<ShopItem> listShopItem;
+    public TMP_Text txtPopupAdd;
+
 
 
     [Header("Detail Item")]
@@ -36,13 +39,16 @@ public class Shop : MonoBehaviour
     [Header("Button")]
     public Button btnShowDetail;
     public Button btnThemVaoGioHang;
+    public Button btnXemAR;
+
 
     private void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
         }
+
     }
 
     private void Start()
@@ -50,6 +56,9 @@ public class Shop : MonoBehaviour
         //btnThemVaoGioHang.AddEventListener(txtNameDetail.text, imageDetail.sprite, currentItemPrice, ButtonThemGioHang);
         btnThemVaoGioHang.onClick.AddListener(delegate { ButtonThemGioHang(txtNameDetail.text, imageDetail.sprite, currentItemPrice); });
         itemTemplate = shopScrollViewContent.GetChild(0).gameObject;
+        txtPopupAdd.text = "+1 vào giỏ hàng";
+        txtPopupAdd.gameObject.SetActive(false);
+        btnXemAR.onClick.AddListener(XemAR);
 
         int len = listShopItem.Count;
 
@@ -72,8 +81,7 @@ public class Shop : MonoBehaviour
 
     void OpenScreenDetail(int itemIndex)
     {
-        ControllerShop.instance.screenDetail.SetActive(true);
-        ControllerShop.instance.screenShop.SetActive(false);
+        AppController.instance.ChangeScreen(AppController.instance.screenDetail);
         txtNameDetail.text = listShopItem[itemIndex].name;
         imageDetail.sprite = listShopItem[itemIndex].image;
         currentItemPrice = listShopItem[itemIndex].price;
@@ -85,14 +93,56 @@ public class Shop : MonoBehaviour
         //btnThemVaoGioHang.onClick.AddListener(delegate { ButtonThemGioHang(txtNameDetail.text, imageDetail.sprite, listShopItem[itemIndex].price); });
 
         //btnThemVaoGioHang = ControllerShop.instance.screenDetail.transform.GetChild(2).GetComponent<Button>();
-        
+
 
     }
 
-    
+    public void PopupText()
+    {
+        txtPopupAdd.color = new Color(txtPopupAdd.color.r, txtPopupAdd.color.g, txtPopupAdd.color.b, 1);
+        txtPopupAdd.transform.DOKill();
+        txtPopupAdd.DOKill();
+        txtPopupAdd.gameObject.SetActive(true);
+        txtPopupAdd.transform.DOMoveY(txtPopupAdd.transform.position.y + 1, 1).SetEase(Ease.Linear);
+        txtPopupAdd.DOFade(0, 1.5f).SetEase(Ease.Linear).OnComplete(() =>
+        {
+            txtPopupAdd.gameObject.SetActive(false);
+        });
+    }
+
     void ButtonThemGioHang(string name, Sprite img, float price)
     {
         GioHang.instance.AddItem(name, img, price);
+        txtPopupAdd.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        txtPopupAdd.transform.position = new Vector3(txtPopupAdd.transform.position.x, txtPopupAdd.transform.position.y + 0.2f, 0);
+        PopupText();
+    }
+
+    public void XemAR()
+    {
+        if (txtNameDetail.text == "Table")
+        {
+            AppController.instance.currentModel = AppController.instance.listModelPrefab[0];
+        }
+        else if (txtNameDetail.text == "Chair")
+        {
+            AppController.instance.currentModel = AppController.instance.listModelPrefab[1];
+        }
+        else if (txtNameDetail.text == "Sofa")
+        {
+            AppController.instance.currentModel = AppController.instance.listModelPrefab[2];
+        }
+        else if (txtNameDetail.text == "BookCase")
+        {
+            AppController.instance.currentModel = AppController.instance.listModelPrefab[3];
+        }
+        else if (txtNameDetail.text == "CabinetTV")
+        {
+            AppController.instance.currentModel = AppController.instance.listModelPrefab[4];
+        }
+        ConnectScene.instance.UnActiveApp();
+
+        AppController.instance.LoadScene("SampleScene");
     }
 
 

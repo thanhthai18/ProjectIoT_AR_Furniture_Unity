@@ -71,4 +71,6 @@ public class GioHangItem : MonoBehaviour
         Destroy(gameObject);
         GioHang.instance.ChangeTongTien(-1.0f * price * soLuong);
     }
+
+    
 }

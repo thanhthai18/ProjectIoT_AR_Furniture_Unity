@@ -14,7 +14,8 @@ public class GioHang : MonoBehaviour
     public int indexCheckName;
     public TextMeshProUGUI txtTongTien;
     private float tongTien;
-    public Button btnClose, btnDatHang, btnHuyDonHang;
+
+
 
     public float TongTien
     {
@@ -24,13 +25,13 @@ public class GioHang : MonoBehaviour
             if (tongTien >= 0)
             {
                 tongTien = value;
-                if (btnDatHang.interactable == false)
+                if (AppController.instance.btnDatHang.interactable == false)
                 {
-                    btnDatHang.interactable = true;
+                    AppController.instance.btnDatHang.interactable = true;
                 }
-                else if(tongTien == 0)
+                else if (tongTien == 0)
                 {
-                    btnDatHang.interactable = false;
+                    AppController.instance.btnDatHang.interactable = false;
                 }
             }
             else
@@ -51,20 +52,14 @@ public class GioHang : MonoBehaviour
 
     private void Start()
     {
-        btnClose.onClick.AddListener(ButtonClose);
-        btnDatHang.onClick.AddListener(ButtonDatHang);
-        btnHuyDonHang.onClick.AddListener(ButtonHuyDonHang);
+        if (listCurrentItemInGioHang.Count == 0)
+        {
+            AppController.instance.btnHuyDonHang.interactable = false;
+            AppController.instance.btnDatHang.interactable = false;
+        }
     }
 
-    public void ButtonClose()
-    {
-        ControllerShop.instance.screenGioHang.SetActive(false);
-    }
-    public void ButtonDatHang()
-    {
-        ControllerShop.instance.screenDatHang.SetActive(true);
-    }
-    public void ButtonHuyDonHang()
+    public void HuyDonHang()
     {
         for (int i = 0; i < listCurrentItemInGioHang.Count; i++)
         {
@@ -72,7 +67,10 @@ public class GioHang : MonoBehaviour
         }
         TongTien = 0;
         listCurrentItemInGioHang.Clear();
+        AppController.instance.btnHuyDonHang.interactable = false;
     }
+
+
 
     public void ChangeTongTien(float value)
     {
@@ -87,14 +85,18 @@ public class GioHang : MonoBehaviour
         }
         else
         {
-            txtTongTien.text = "Tong tien: " +  TongTien.ToString() + " VNĐ";
+            txtTongTien.text = "Tong tien: " + TongTien.ToString() + " VNĐ";
         }
     }
 
+
     public void AddItem(string name, Sprite img, float price)
     {
+        if (!AppController.instance.btnHuyDonHang.interactable)
+        {
+            AppController.instance.btnHuyDonHang.interactable = true;
+        }
         TongTien += price;
-
         if (listCurrentItemInGioHang.Count == 0)
         {
             var tmpItem = Instantiate(gioHangItemPrefab, gioHangScrollViewContent);
@@ -136,6 +138,7 @@ public class GioHang : MonoBehaviour
             }
         }
     }
+
 
 
 

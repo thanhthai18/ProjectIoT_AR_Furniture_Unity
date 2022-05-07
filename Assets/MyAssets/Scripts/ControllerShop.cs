@@ -33,7 +33,7 @@ public class ControllerShop : MonoBehaviour
     void CloseScreenShop()
     {
         screenShop.SetActive(false);
-        screenGioHang.SetActive(true);
+        AppController.instance.screenGenaral.SetActive(true);
     }
 
     void BackToScreenShop()
